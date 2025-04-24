@@ -13,7 +13,15 @@ export const useCartStore = create<CartStore>()(
     persist(
         (set) => ({
             items: [],
-            addToCart: () => 
+            addToCart: (todo) =>
+                set((state) => {
+                    const existing = state.items.find((item) => item.id === todo.id)
+                    if(existing){
+                        return {
+                            items: state: state.items.map
+                        }
+                    }
+                }) 
         }),
         {
             name: 'todo-storage',
