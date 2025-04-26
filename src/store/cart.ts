@@ -1,31 +1,44 @@
-import {create} from 'zustand'
-import { CartItem, Todo } from '@/types'
-import { persist } from 'zustand/middleware'
+import { create } from "zustand";
+import { Todo } from "@/types/";
+import { persist } from "zustand/middleware";
+import { stat } from "fs";
 
-type CartStore ={
-    items: CartItem[]
-    addToCart: (todo: Todo) => void
-    removeFromCart: (id:string) => void
-    clearCart: () => void
-}
+type CartStore = {
+  items: Todo[];
+  addToCart: (todo: Todo) => void;
+  updateTodo: (updatedFields: Todo) => void;
+  removeFromCart: (id: number) => void;
+  clearCart: () => void;
+};
 
 export const useCartStore = create<CartStore>()(
-    persist(
-        (set) => ({
-            items: [],
-            addToCart: (todo) =>
-                set((state) => {
-                    const existing = state.items.find((item) => item.id === todo.id)
-                    if(existing){
-                        return {
-                            items: state: state.items.map
-                        }
-                    }
-                }) 
-        }),
-        {
-            name: 'todo-storage',
-            partialize: (state)
-        }
-    )
-)
+  persist(
+    (set) => ({
+      items: [{ name: "hehe", description: "desc", id: 1 }],
+      addToCart: (todo) => {
+        if (!todo.name || !todo.description) return;
+
+        set((state) => ({
+          items: [...state.items, { ...todo }],
+        }));
+      },
+      updateTodo: (updatedFields) => {
+        set((state) => ({
+          items: state.items.map((item) => item.id === updatedFields.id ? { ...item, ...updatedFields } : item
+          )
+        }));
+      },
+      removeFromCart: (id) =>
+        set((state) => ({
+          items: state.items.filter((item) => item.id !== id),
+        })),
+      clearCart: () => set({ items: [] }),
+    }),
+    {
+      name: "cart-storage",
+      partialize: (state) => ({
+        items: state.items,
+      }),
+    }
+  )
+);

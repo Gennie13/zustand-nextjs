@@ -1,5 +1,5 @@
 export type Todo = {
-    id: String,
+    id: number,
     name: String,
     description: String
 }
